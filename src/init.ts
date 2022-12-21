@@ -1,58 +1,50 @@
-import { Cards, Products } from './card';
+import { Cards, Products, CategoryCards } from './card';
 import { FilterCategories } from './filterCategory';
 
-
-
 class Initialization {
-  cards;
-  filterCategories;
-  cardsCategory: Array<Products[]>;
-  constructor() {
-    this.cards = new Cards();
-    this.filterCategories = new FilterCategories();
-    this.cardsCategory = [];
-  }
-  init() {
-    this.cards.getCards();
-    this.filterCategories.appendItemsFilterCategory();
-    window.addEventListener('click', (e: Event) => {
-      this.windowClickHandler(e);
-    });
-  }
-
-  windowClickHandler(e: Event) {
-    const targer = e.target as Element;
-    if (!targer) return;
-    const category: HTMLInputElement | null = targer.closest('.category-mark');
-
-    this.categoryClickHandler(category);
-  }
-  categoryClickHandler(category: HTMLInputElement | null) {
-
-    if (category) {
-      if (category.checked) {
-       
-        const categoryText: string | undefined = category.dataset.category;
-
-        if (categoryText) {
-          const productsCategories = this.filterCategories.categoriesCards[categoryText];
-          this.cardsCategory.push(productsCategories);
-          console.log(this.cardsCategory)
-
-          this.cards.setCards(this.cardsCategory);
-        }
-      }
-      else {
-        this.cardsCategory.pop();
-        if(this.cardsCategory.length === 0){
-          this.cards.getCards();
-        }
-        else{
-          this.cards.setCards(this.cardsCategory);
-        }
-      }
+    cards;
+    filterCategories;
+    cardsCategory: CategoryCards;
+    constructor() {
+        this.cardsCategory = {};
+        this.cards = new Cards();
+        this.filterCategories = new FilterCategories();
     }
-  }
+    init() {
+        this.cards.getCards();
+        this.filterCategories.appendItemsFilterCategory();
+        window.addEventListener('click', (e: Event) => {
+            this.windowClickHandler(e);
+        });
+    }
+
+    windowClickHandler(e: Event) {
+        const targer = e.target as Element;
+        if (!targer) return;
+        const category: HTMLInputElement | null = targer.closest('.category-mark');
+
+        this.categoryClickHandler(category);
+    }
+    categoryClickHandler(category: HTMLInputElement | null) {
+        if (category) {
+            const categoryText: string | undefined = category.dataset.category;
+            if (category.checked) {
+                if (categoryText) {
+                    const listCardsCategory = this.filterCategories.categoriesCards[categoryText];
+                    this.cardsCategory[categoryText] = listCardsCategory;
+                    this.cards.setCards(this.cardsCategory);
+                }
+            } else {
+                if (categoryText) {
+                    delete this.cardsCategory[categoryText];
+                    this.cards.setCards(this.cardsCategory);
+                }
+                if (Object.keys(this.cardsCategory).length === 0) {
+                    this.cards.getCards();
+                }
+            }
+        }
+    }
 }
 
 export default Initialization;

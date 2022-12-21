@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const EslingPlugin = require('eslint-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const baseConfig = {
     entry: path.resolve(__dirname, './src/index'),
@@ -12,7 +13,7 @@ const baseConfig = {
         rules: [
             {
                 test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
+                use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
             {
                 test: /\.ts$/i,
@@ -20,13 +21,13 @@ const baseConfig = {
                 exclude: /node_modules/,
             },
             {
-              test: /\.html$/,
-              use: 'html-loader'
-          },
+                test: /\.html$/,
+                use: 'html-loader'
+            },
             {
-              test: /\.(jpg|png|svg|jpeg|gif)$/,
-              type: 'asset/resource'
-          }
+                test: /\.(jpg|png|svg|jpeg|gif)$/,
+                type: 'asset/resource'
+            }
         ],
     },
     resolve: {
@@ -43,12 +44,16 @@ const baseConfig = {
         }),
         new CleanWebpackPlugin(),
         new EslingPlugin({ extensions: 'ts' }),
+        new MiniCssExtractPlugin({
+            filename: '[hash].css'
+        })
     ],
 };
 
 module.exports = ({ mode }) => {
     const isProductionMode = mode === 'prod';
     const envConfig = isProductionMode ? require('./webpack.prod.config') : require('./webpack.dev.config');
+
 
     return merge(baseConfig, envConfig);
 };

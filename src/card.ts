@@ -1,30 +1,30 @@
 import dataCards from './bd/products.json';
 
 interface Products {
-    id: number;
-    title: string;
-    description: string;
-    price: number;
-    discountPercentage: number;
-    rating: number;
-    stock: number;
-    brand: string;
-    category: string;
-    thumbnail: string;
-    images: string[];
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
 }
-// interface BrandCards{
-//   [index: string]:Products[]
-// }
-// interface CategoryCards {
-//   [index: number]: BrandCards;
-// }
 
+// interface ff{
+//   [index: number]: Products;
+// }
+// interface  TotalProductsCategories{
+//   [index: number]: ff;
+// }
 class Cards {
-    createCard({ title, price, discountPercentage, rating, stock, brand, category }: Products) {
-        const cardEl = document.createElement('div');
-        cardEl.classList.add('card');
-        const content = `
+  createCard({ title, price, discountPercentage, rating, stock, brand, category }: Products) {
+    const cardEl = document.createElement('div');
+    cardEl.classList.add('card');
+    const content = `
    
     <div class="card__inner">
       <div class="card__title">
@@ -84,48 +84,48 @@ class Cards {
       </div>
     </div>
     `;
-        cardEl.innerHTML = content;
-        return cardEl;
-    }
-    createBoxCards() {
-        const cardsWrap = document.createElement('div');
-        cardsWrap.classList.add('cards-wrap');
+    cardEl.innerHTML = content;
+    return cardEl;
+  }
+  createBoxCards() {
+    const cardsWrap = document.createElement('div');
+    cardsWrap.classList.add('cards-wrap');
 
-        return cardsWrap;
-    }
-    deleteCards(storeMainProducts: Element | null) {
-        if (storeMainProducts) storeMainProducts.innerHTML = '';
-    }
-    appendCards(cardsFragment: DocumentFragment) {
-        const storeMainProducts: Element | null = document.querySelector('.store-main__products');
-        this.deleteCards(storeMainProducts);
-        const cardsBox: Element = this.createBoxCards();
-        cardsBox.append(cardsFragment);
-        if (storeMainProducts) storeMainProducts.appendChild(cardsBox);
-    }
-    getCards(amountCards = 20) {
-        if ('products' in dataCards) {
-            const cards: Products[] = dataCards.products;
-            const cardsFragment: DocumentFragment = document.createDocumentFragment();
+    return cardsWrap;
+  }
+  deleteCards(storeMainProducts: Element | null) {
+    if (storeMainProducts) storeMainProducts.innerHTML = '';
+  }
+  appendCards(cardsFragment: DocumentFragment) {
+    const storeMainProducts: Element | null = document.querySelector('.store-main__products');
+    this.deleteCards(storeMainProducts);
+    const cardsBox: Element = this.createBoxCards();
+    cardsBox.append(cardsFragment);
+    if (storeMainProducts) storeMainProducts.appendChild(cardsBox);
+  }
+  getCards(amountCards = 20) {
+    if ('products' in dataCards) {
+      const cards: Products[] = dataCards.products;
+      const cardsFragment: DocumentFragment = document.createDocumentFragment();
 
-            for (let i = 0; i < amountCards; i++) {
-                cardsFragment.appendChild(this.createCard(cards[i]));
-            }
+      for (let i = 0; i < amountCards; i++) {
+        cardsFragment.appendChild(this.createCard(cards[i]));
+      }
 
-            this.appendCards(cardsFragment);
-            return cards.slice(0, amountCards);
-        }
+      this.appendCards(cardsFragment);
+      return cards.slice(0, amountCards);
     }
-    setCards(categoryCards: Products[]) {
-        console.log(categoryCards);
-
-        const cardsFragment: DocumentFragment = document.createDocumentFragment();
-        for (const card of categoryCards) {
-            cardsFragment.appendChild(this.createCard(card));
-        }
-
-        this.appendCards(cardsFragment);
+  }
+  setCards(categoryCards: Array<Products[]>) {
+    const cardsFragment: DocumentFragment = document.createDocumentFragment();
+    for (let productsCategories of categoryCards) {
+      for (let productCategory of productsCategories) {
+        cardsFragment.appendChild(this.createCard(productCategory));
+      }
     }
+
+    this.appendCards(cardsFragment);
+  }
 }
 
 export { Cards, Products };

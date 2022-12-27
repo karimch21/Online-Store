@@ -18,7 +18,7 @@ interface CategoryCards {
 }
 
 class Cards {
-    createCard({ title, price, discountPercentage, rating, stock, brand, category }: Products) {
+    createCard({ title, price, discountPercentage, rating, stock, brand, category, thumbnail }: Products) {
         const cardEl = document.createElement('div');
         cardEl.classList.add('card');
         const content = `
@@ -27,8 +27,8 @@ class Cards {
       <div class="card__title">
         ${title}
       </div>
-      <div class="card__content">
-        <ul class="card__items">
+      <div class="card__content" style="background-image:url(${thumbnail});">
+        <ul class="card__content-items">
           <li class="card__item">
             <span class="card__item-title">
               Category:
@@ -100,7 +100,7 @@ class Cards {
         cardsBox.append(cardsFragment);
         if (storeMainProducts) storeMainProducts.appendChild(cardsBox);
     }
-    getCards(amountCards = 20) {
+    getDefaultCards(amountCards = 100) {
         if ('products' in dataCards) {
             const cards: Products[] = dataCards.products;
             const cardsFragment: DocumentFragment = document.createDocumentFragment();
@@ -113,11 +113,11 @@ class Cards {
             return cards.slice(0, amountCards);
         }
     }
-    setCards(categoryCards: CategoryCards) {
+    setBrandCategoryCards(filteredCards: CategoryCards) {
         const cardsFragment: DocumentFragment = document.createDocumentFragment();
-        for (const productsCategories of Object.values(categoryCards)) {
-            for (const productCategory of productsCategories) {
-                cardsFragment.appendChild(this.createCard(productCategory));
+        for (const productsClists of Object.values(filteredCards)) {
+            for (const productItem of productsClists) {
+                cardsFragment.appendChild(this.createCard(productItem));
             }
         }
 

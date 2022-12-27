@@ -1,0 +1,50 @@
+.store-main__inner{
+  display: flex;
+  justify-content: space-between;
+}
+.filters{
+  width: 18%;
+  min-width: 230px;
+}
+.store-main__products{
+  width: 81%;
+}
+.cards-wrap{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.card{
+  width: 24%;
+}
+.card__content{
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.filter{
+  border: 1px solid rgb(255, 115, 0);
+  background-color: rgba(0, 0, 0, 0.89);
+  color: #fff;
+  border-radius: 20px;
+}
+.filter__items{
+  padding-left: 12px;
+  max-height: 180px;
+  overflow-y: scroll;
+
+}
+.filters__category{
+  margin-bottom: 20px;
+}
+.filter__titile{
+  padding: 10px;
+  padding-left: 12px;
+  border-bottom: 1px solid rgb(255, 115, 0);
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+.filter__item{
+  display: block;
+}

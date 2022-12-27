@@ -1,29 +1,20 @@
 import cards from './bd/products.json';
 import { Cards, Products } from './card';
 
-// interface ListDataCard {
-//   products: Products[];
-//   total: number;
-//   skip: number;
-//   limit: number;
-// }
 
 type BrandCard = { [index: string]: Products[] };
 type CategoriesCards = { [index: string]: Products[] };
 interface CategoryCard {
     [index: string]: BrandCard;
 }
-const listCategoryCards: CategoryCard = {};
+
 class FilterCategories {
     categories: string[];
-    convertedCards: CategoryCard;
-    branCards: BrandCard;
-    categoriesCards: CategoriesCards;
+    categoryCards: CategoriesCards;
+
     constructor() {
-        this.branCards = {};
-        this.categoriesCards = {};
-        this.convertedCards = this.convertingCards();
-        this.categories = Object.keys(this.convertedCards);
+        this.categoryCards = this.getCategoriesCards();
+        this.categories = Object.keys(this.categoryCards);
     }
 
     createItemsFilterCategory() {
@@ -55,37 +46,19 @@ class FilterCategories {
         }
     }
 
-    convertingCards() {
+    getCategoriesCards() {
+        let categoriesCards:CategoriesCards = {};
         cards.products.forEach((card: Products) => {
             const category: string = card.category;
-            const brand: string = card.brand;
 
-            if (!this.branCards[brand]) {
-                this.branCards[brand] = [card];
+            if (!categoriesCards[category]) {
+                categoriesCards[category] = [card];
             } else {
-                this.branCards[brand].push(card);
-            }
-
-            if (!this.categoriesCards[category]) {
-                this.categoriesCards[category] = [card];
-            } else {
-                this.categoriesCards[category].push(card);
-            }
-
-            if (!listCategoryCards[category]) {
-                listCategoryCards[category] = {
-                    [brand]: [card],
-                };
-            } else {
-                if (!listCategoryCards[category][brand]) {
-                    listCategoryCards[category][brand] = [card];
-                } else {
-                    listCategoryCards[category][brand].push(card);
-                }
+                categoriesCards[category].push(card);
             }
         });
 
-        return listCategoryCards;
+        return categoriesCards;
     }
 }
 

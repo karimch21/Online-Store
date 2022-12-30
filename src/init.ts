@@ -1,150 +1,211 @@
 import { Cards, Products, CategoryCards } from './card';
 import { Filters, BrandCard } from './filtersCategoryBrand';
 
+type FilterCategoryBrand = { [index: string]: Products[] }
+
 class Initialization {
     cards;
-    cardsCategory: CategoryCards;
-    cardsBrands: BrandCard
-    cardsCategoryBrand;
+    filters;
+    listBrands: FilterCategoryBrand;
+    listCategories: FilterCategoryBrand;
+    cardsCategory: FilterCategoryBrand;
+    cardsBrands: FilterCategoryBrand;
+    sotedCardsCategory: FilterCategoryBrand;
+    sortedCardsBrands: FilterCategoryBrand;
     categoryText: string | undefined
     brandText: string | undefined
     constructor() {
+        this.cards = new Cards();
+        this.listBrands = {};
+        this.listCategories = {};
+        this.filters = new Filters();
         this.cardsCategory = {};
         this.cardsBrands = {};
-        this.cards = new Cards();
-        this.cardsCategoryBrand = new Filters();
-        this.categoryText = ''
+        this.sotedCardsCategory = {};
+        this.sortedCardsBrands = {};
+        this.categoryText = '';
         this.brandText = ''
     }
     init() {
         this.cards.getDefaultCards();
-        this.cardsCategoryBrand.appendItemsFilterCategory();
-        this.cardsCategoryBrand.appendItemsFilterBrands()
+        this.filters.appendItemsFilterCategory();
+        this.filters.appendItemsFilterBrands()
         window.addEventListener('click', (e: Event) => {
             this.windowClickHandler(e);
         });
     }
     windowClickHandler(e: Event) {
-        const target = e.target as Element;
-        if (!target) return;
-
-        this.filtersClickHandler(target);
+        let target = e.target as Element;
+        if (target) {
+            this.clickCardCategoryHandler(target);
+            this.clickCardBrandHandler(target);
+        }
     }
-    filtersClickHandler(target: Element) {
-        const category: HTMLInputElement | null = target.closest('.category-mark');
-        const brand: HTMLInputElement | null = target.closest('.brand-mark');
-        // if(category || brand){
-        //     if(category?.checked){
-        //         this.brandClickHandler(brand)  
-        //     }
-        // }
-        this.categoryClickHandler(category);
-        this.brandClickHandler(brand)
-    }
-    categoryClickHandler(category: HTMLInputElement | null) {
 
+    clickCardCategoryHandler(target: Element) {
+        const category: HTMLInputElement | null = target.closest('.category-mark')
         if (category) {
             this.categoryText = category.dataset.category;
-            if (category.checked) {
-
-
-                if (Object.keys(this.cardsBrands).length > 0) {
-
-                    for (let cardCategory in this.cardsBrands) {
-                        for (let card of this.cardsBrands[cardCategory]) {
-                            if (card.category === this.categoryText) {
-                                if (!this.cardsCategory[this.categoryText]) {
-                                    this.cardsCategory[this.categoryText] = [card];
-                                } else {
-                                    this.cardsCategory[this.categoryText].push(card)
-                                }
-
-                            }
-                        }
-                    }
-
-
-                    this.cards.setBrandCategoryCards(this.cardsCategory);
-                    return
-                }
-
-
-                if (this.categoryText) {
-                    const listCardsCategory = this.cardsCategoryBrand.categoryCards[this.categoryText];
-                    this.cardsCategory[this.categoryText] = listCardsCategory;
-
-                    this.cards.setBrandCategoryCards(this.cardsCategory);
-
-                }
-            } else {
-                if (this.categoryText) {
-                    delete this.cardsCategory[this.categoryText];
-                    this.cards.setBrandCategoryCards(this.cardsCategory);
-                }
-                if (Object.keys(this.cardsBrands).length === 0 && Object.keys(this.cardsCategory).length === 0) {
-                    this.cards.getDefaultCards();
+            if (this.categoryText) {
+                if (category.checked) {
+                    this.addNewCategory(this.categoryText)
                 }
                 else {
-                    let brandCard: HTMLInputElement | null = document.querySelector(`[data-brand="${this.brandText}"]`);
+                    this.deleteCategory(this.categoryText)
+                }
+            }
 
-                    if (brandCard) {
-                        this.brandClickHandler(brandCard)
+        }
+    }
+    addNewCategory(categoryText: string) {
+        let currentListProducts = this.filters.categoryCards[categoryText];
+        if (Object.keys(this.listBrands).length > 0) {
+            let products: Products[] = [];
+            for (let brand of Object.keys(this.listBrands)) {
+                for (let card of currentListProducts) {
+                    if (card.brand === brand) {
+                        products.push(card);
                     }
+                }
+            }
+            console.log('--------')
+            console.log(this.cardsCategory)
+            console.log('--------')
+            this.cardsCategory[categoryText] = products
+            this.cards.setBrandCategoryCards(this.cardsCategory)
+        } else {
+            if (!this.cardsCategory[categoryText]) {
+                this.cardsCategory[categoryText] = currentListProducts;
+                this.listCategories[categoryText] = this.filters.categoryCards[categoryText];
+            }
+            else {
+                this.cardsCategory[categoryText].push(...currentListProducts);
+                this.listCategories[categoryText].push(...(this.filters.categoryCards[categoryText]));
+            }
+
+            this.cards.setBrandCategoryCards(this.cardsCategory)
+        }
+    }
+    deleteCategory(categoryText: string) {
+        delete this.cardsCategory[categoryText];
+        delete this.listCategories[categoryText];
+
+        if (Object.keys(this.cardsCategory).length === 0) {
+            if (Object.keys(this.cardsBrands).length > 0) {
+                console.log(1)
+                this.cards.setBrandCategoryCards(this.listBrands)
+            }
+            else {
+                console.log(2)
+                this.cards.getDefaultCards();
+            }
+        }
+        else {
+            console.log(this.listBrands, 'GOVNO', this.cardsCategory)
+            if (Object.keys(this.cardsBrands).length > 0) {
+             
+                for (let [categoryTitle, productsCategory] of Object.entries(this.cardsCategory)) {
+                    let products:Products[] = [];
+                    for (let brand of Object.keys(this.listBrands)) {
+                        for(let card of productsCategory){
+                            if (card.brand === brand) {
+                               products.push(card)
+                            }
+                        } 
+                    }
+                    this.cardsCategory[categoryTitle] = products
+                }
+
+                this.cards.setBrandCategoryCards(this.cardsCategory);
+            }
+            else {
+                this.cards.setBrandCategoryCards(this.cardsCategory);
+            }
+        }
+    }
+    clickCardBrandHandler(target: Element) {
+        const brand: HTMLInputElement | null = target.closest('.brand-mark')
+        if (brand) {
+            this.brandText = brand.dataset.brand;
+            if (this.brandText) {
+                if (brand.checked) {
+                    this.addNewBrand(this.brandText)
+                }
+                else {
+                    this.deleteBrand(this.brandText)
                 }
             }
         }
     }
-    brandClickHandler(brand: HTMLInputElement | null) {
-        if (brand) {
-            this.brandText = brand.dataset.brand;
-            if (brand.checked) {
-
-
-
-                if (Object.keys(this.cardsCategory).length > 0) {
-
-                    for (let cardBrand in this.cardsCategory) {
-                        for (let card of this.cardsCategory[cardBrand]) {
-                            if (card.brand === this.brandText) {
-                                if (!this.cardsBrands[this.brandText]) {
-                                    this.cardsBrands[this.brandText] = [card];
-                                } else {
-                                    this.cardsBrands[this.brandText].push(card)
-                                }
-
-                            }
-                        }
+    addNewBrand(brandText: string) {
+        let currentListProducts = this.filters.branCards[brandText];
+        if (!this.cardsBrands[brandText]) {
+            this.listBrands[brandText] = this.filters.branCards[brandText]
+        }
+        else {
+            this.listBrands[brandText].push(...(this.filters.branCards[brandText]))
+        }
+        if (Object.keys(this.listCategories).length > 0) {
+            let products: Products[] = [];
+            for (let category of Object.keys(this.listCategories)) {
+                for (let card of currentListProducts) {
+                    if (card.category === category) {
+                        products.push(card);
                     }
-
-
-                    this.cards.setBrandCategoryCards(this.cardsBrands);
-                    return
                 }
-
-                if (this.brandText) {
-                    const listCardsBrands = this.cardsCategoryBrand.branCards[this.brandText];
-                    this.cardsBrands[this.brandText] = listCardsBrands;
-
-                    this.cards.setBrandCategoryCards(this.cardsBrands);
-                }
+            }
+            this.cardsBrands[brandText] = products;
+            this.cards.setBrandCategoryCards(this.cardsBrands)
+        } else {
+            if (!this.cardsBrands[brandText]) {
+                this.listBrands[brandText] = this.filters.branCards[brandText]
+                this.cardsBrands[brandText] = currentListProducts;
             }
             else {
-                if (this.brandText) {
-                    delete this.cardsBrands[this.brandText];
-                    this.cards.setBrandCategoryCards(this.cardsBrands);
-                }
-                if (Object.keys(this.cardsBrands).length === 0 && Object.keys(this.cardsCategory).length === 0) {
-                    this.cards.getDefaultCards();
-                }
-                else {
-                    let catergoryCard: HTMLInputElement | null = document.querySelector(`[data-category="${this.categoryText}"]`);
+                this.listBrands[brandText].push(...(this.filters.branCards[brandText]))
+                this.cardsBrands[brandText].push(...currentListProducts)
+            }
 
-                    if (catergoryCard) {
-                        this.categoryClickHandler(catergoryCard)
-                    }
-                }
+            this.cardsBrands[brandText] = this.filters.branCards[brandText];
+            this.cards.setBrandCategoryCards(this.cardsBrands)
+        }
+    }
+    deleteBrand(brandText: string) {
+        delete this.cardsBrands[brandText];
+        delete this.listBrands[brandText];
+
+
+        if (Object.keys(this.cardsBrands).length === 0) {
+            if (Object.keys(this.cardsCategory).length > 0) {
+                this.cards.setBrandCategoryCards(this.listCategories)
+            }
+            else {
+                this.cards.getDefaultCards();
             }
         }
+        else {
+            if(Object.keys(this.cardsCategory).length > 0){
+                
+                for (let [categoryTitle, productsCategory] of Object.entries(this.cardsCategory)) {
+                    let products:Products[] = [];
+                    for (let brand of Object.keys(this.listBrands)) {
+                        for(let card of productsCategory){
+                            if (card.brand === brand) {
+                               products.push(card)
+                            }
+                        } 
+                    }
+                    this.cardsCategory[categoryTitle] = products
+                }
+                console.log(this.cardsCategory)
+                this.cards.setBrandCategoryCards(this.cardsCategory);
+            }
+            else{
+                console.log(222)
+                this.cards.setBrandCategoryCards(this.cardsBrands);
+            }
+        }
+
     }
 }
 

@@ -27,7 +27,7 @@ class Initialization {
         this.brandText = ''
     }
     init() {
-        this.cards.getDefaultCards();
+        this.cards.getDefaultCards(20);
         this.filters.appendItemsFilterCategory();
         this.filters.appendItemsFilterBrands()
         window.addEventListener('click', (e: Event) => {
@@ -58,6 +58,12 @@ class Initialization {
         }
     }
     addNewCategory(categoryText: string) {
+        if (!this.cardsCategory[categoryText]) {
+            this.listCategories[categoryText] = this.filters.categoryCards[categoryText];
+        }
+        else {
+            this.listCategories[categoryText].push(...(this.filters.categoryCards[categoryText]));
+        }
         let currentListProducts = this.filters.categoryCards[categoryText];
         if (Object.keys(this.listBrands).length > 0) {
             let products: Products[] = [];
@@ -101,17 +107,17 @@ class Initialization {
             }
         }
         else {
-            console.log(this.listBrands, 'GOVNO', this.cardsCategory)
+            console.log(this.listBrands, 'G', this.cardsCategory)
             if (Object.keys(this.cardsBrands).length > 0) {
-             
-                for (let [categoryTitle, productsCategory] of Object.entries(this.cardsCategory)) {
-                    let products:Products[] = [];
+
+                for (let [categoryTitle, productsCategory] of Object.entries(this.listCategories)) {
+                    let products: Products[] = [];
                     for (let brand of Object.keys(this.listBrands)) {
-                        for(let card of productsCategory){
+                        for (let card of productsCategory) {
                             if (card.brand === brand) {
-                               products.push(card)
+                                products.push(card)
                             }
-                        } 
+                        }
                     }
                     this.cardsCategory[categoryTitle] = products
                 }
@@ -145,16 +151,34 @@ class Initialization {
         else {
             this.listBrands[brandText].push(...(this.filters.branCards[brandText]))
         }
+        console.log('-before- create brand', this.cardsBrands, this.cardsCategory)
+
         if (Object.keys(this.listCategories).length > 0) {
-            let products: Products[] = [];
-            for (let category of Object.keys(this.listCategories)) {
-                for (let card of currentListProducts) {
-                    if (card.category === category) {
-                        products.push(card);
+            console.log('before Add brand ', this.cardsBrands, this.cardsCategory)
+            for (let [brandTitle, cardsBrand] of Object.entries(this.listBrands)) {
+                let products: Products[] = [];
+                for (let category of Object.keys(this.listCategories)) {
+                    for (let card of cardsBrand) {
+                        if (card.category === category) {
+                            products.push(card);
+                        }
                     }
                 }
+                this.cardsBrands[brandTitle] = products
             }
-            this.cardsBrands[brandText] = products;
+            for (let [categoryTitle, productsCategory] of Object.entries(this.listCategories)) {
+                let products: Products[] = [];
+                for (let brand of Object.keys(this.listBrands)) {
+                    for (let card of productsCategory) {
+                        if (card.brand === brand) {
+                            products.push(card)
+                        }
+                    }
+                }
+                this.cardsCategory[categoryTitle] = products
+            }
+           
+            console.log('-after- create brand', this.cardsBrands, this.cardsCategory)
             this.cards.setBrandCategoryCards(this.cardsBrands)
         } else {
             if (!this.cardsBrands[brandText]) {
@@ -174,7 +198,6 @@ class Initialization {
         delete this.cardsBrands[brandText];
         delete this.listBrands[brandText];
 
-
         if (Object.keys(this.cardsBrands).length === 0) {
             if (Object.keys(this.cardsCategory).length > 0) {
                 this.cards.setBrandCategoryCards(this.listCategories)
@@ -184,23 +207,37 @@ class Initialization {
             }
         }
         else {
-            if(Object.keys(this.cardsCategory).length > 0){
-                
-                for (let [categoryTitle, productsCategory] of Object.entries(this.cardsCategory)) {
-                    let products:Products[] = [];
-                    for (let brand of Object.keys(this.listBrands)) {
-                        for(let card of productsCategory){
-                            if (card.brand === brand) {
-                               products.push(card)
+            if (Object.keys(this.listCategories).length > 0) {
+                for (let [brandTitle, cardsBrand] of Object.entries(this.listBrands)) {
+                    let products: Products[] = [];
+                    for (let category of Object.keys(this.listCategories)) {
+                        for (let card of cardsBrand) {
+                            if (card.category === category) {
+                                products.push(card);
                             }
-                        } 
+                        }
+                    }
+                    this.cardsBrands[brandTitle] = products
+                }
+                
+                console.log('-before- delete brand', this.listBrands, this.listCategories, this.cardsBrands, this.cardsCategory)
+
+                for (let [categoryTitle, productsCategory] of Object.entries(this.listCategories)) {
+                    let products: Products[] = [];
+                    for (let brand of Object.keys(this.listBrands)) {
+                        console.log(brand, 1221212)
+                        for (let card of productsCategory) {
+                            if (card.brand === brand) {
+                                products.push(card)
+                            }
+                        }
                     }
                     this.cardsCategory[categoryTitle] = products
                 }
-                console.log(this.cardsCategory)
+                console.log('-after- delete brand', this.cardsBrands, this.cardsCategory)
                 this.cards.setBrandCategoryCards(this.cardsCategory);
             }
-            else{
+            else {
                 console.log(222)
                 this.cards.setBrandCategoryCards(this.cardsBrands);
             }

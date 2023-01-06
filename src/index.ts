@@ -7,6 +7,6 @@ const initialization = new Initialization();
 initialization.init();
 
 // (new SortingPriceStock()).initPriceStockSLliders()
-let a = new SortingPriceStock()
-a.sorting()
-a.initPriceStockSLliders()
+const a = new SortingPriceStock();
+a.sorting();
+a.initPriceStockSLliders();

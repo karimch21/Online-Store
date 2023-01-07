@@ -27,7 +27,7 @@ class Cards {
       <div class="card__title">
         ${title}
       </div>
-      <div class="card__content" style="background-image:url();">
+      <div class="card__content" style="background-image:url(${thumbnail});">
         <ul class="card__content-items">
           <li class="card__item">
             <span class="card__item-title">

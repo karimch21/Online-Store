@@ -13,6 +13,7 @@ class SortingPriceStock {
     maxStock: number;
     minStock: number;
     listPrice: number[];
+    cards;
     constructor() {
         this.listProducts = cards.products;
         this.maxPrice = 100;
@@ -20,6 +21,7 @@ class SortingPriceStock {
         this.maxStock = 0;
         this.minStock = 10;
         this.listPrice = [];
+        this.cards = new Cards();
     }
     sorting() {
         let minPrice: number = this.listProducts[0].price;
@@ -198,6 +200,7 @@ class SortingPriceStock {
                 console.log('start', sortedProductsPrice);
                 sortedProductsLowerSlider = this.listProducts.slice(startIndex);
             }
+            this.cards.setBrandCategoryCards({cards:sortedProductsPrice})
         });
         priceUpperSlider.addEventListener('change', () => {
             const endPrice: number = this.listPrice[+priceUpperSlider.value];
@@ -218,6 +221,7 @@ class SortingPriceStock {
                 sortedProductsUpperSlider = this.listProducts.slice(0, endIndex + 1);
                 console.log('end', sortedProductsPrice);
             }
+            this.cards.setBrandCategoryCards({cards:sortedProductsPrice})
         });
         priceLowerSlider.addEventListener('input', () => {
             if (priceFrom) {

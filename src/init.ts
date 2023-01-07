@@ -1,6 +1,6 @@
 import { Cards, Products, CategoryCards } from './card';
 import { Filters, BrandCard } from './filtersCategoryBrand';
-import SortingPriceStock from './sortPriceStock'
+import SortingPriceStock from './sortPriceStock';
 
 type FilterCategoryBrand = { [index: string]: Products[] };
 
@@ -30,7 +30,7 @@ class Initialization {
         this.brandText = '';
     }
     init() {
-        this.sortingPriceStock.initSortSliders()
+        this.sortingPriceStock.initSortSliders();
         this.cards.getDefaultCards(100);
         this.filters.appendItemsFilterCategory();
         this.filters.appendItemsFilterBrands();

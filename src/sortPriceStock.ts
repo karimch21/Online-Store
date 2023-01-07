@@ -28,12 +28,13 @@ class SortingPriceStock {
         this.maxStock = 0;
         this.minStock = 10;
         this.listPrice = [];
-        this.listStock = []
+        this.listStock = [];
         this.cardsProduct = new Cards();
-        this.sortCardsPrices = []
-        this.sortCardsStock = []
+        this.sortCardsPrices = [];
+        this.sortCardsStock = [];
     }
     sorting() {
+        this.listPrice = []
         let minPrice: number = this.cardsPrices[0].price;
         let maxPrice: number = this.cardsPrices[1].price;
         let minStock: number = this.cardsStocks[0].stock;
@@ -66,22 +67,18 @@ class SortingPriceStock {
         });
 
         this.listPrice.sort((numA: number, numB: number) => numA - numB);
-        if (this.sortCardsStock.length > 1) {
 
-        }
         this.maxPrice = maxPrice;
         this.minPrice = minPrice;
         this.maxStock = maxStock;
         this.minStock = minStock;
         console.log(this.cardsPrices, this.listPrice);
-
-
     }
     sortingStock() {
-        
-        let minStock: number = this.cardsStocks[0].stock;
-        let maxStock: number = this.cardsStocks[1].stock;
-        
+        this.listStock = []
+        const minStock: number = this.cardsStocks[0].stock;
+        const maxStock: number = this.cardsStocks[1].stock;
+
         this.cardsStocks.sort((cardA: Products, cardB: Products) => {
             if (!this.listStock.includes(cardA.stock)) {
                 this.listStock.push(cardA.stock);
@@ -92,13 +89,11 @@ class SortingPriceStock {
             if (cardA.stock < cardB.stock) {
                 return -1;
             }
-           
 
             return 1;
         });
 
         this.listStock.sort((numA: number, numB: number) => numA - numB);
-      
     }
     createFilterPrice() {
         const filter = document.createElement('div');
@@ -169,7 +164,7 @@ class SortingPriceStock {
         lowerRange.max = (this.listStock.length - 1).toString();
         upperRange.max = (this.listStock.length - 1).toString();
         lowerRange.value = (0).toString();
-        upperRange.value = (this.listStock.length).toString();
+        upperRange.value = this.listStock.length.toString();
 
         boxFilter.appendChild(lowerRange);
         boxFilter.appendChild(upperRange);
@@ -194,13 +189,25 @@ class SortingPriceStock {
             filtersFrom.appendChild(stockFilter);
         }
     }
+    deleteFilterStock() {
+        const filtersStock: HTMLFormElement | null = document.querySelector('.filters__stock');
+        if (filtersStock) {
+            filtersStock.remove()
+        }
+    }
+    deleteFiltersPrices() {
+        const filtersPrices: HTMLFormElement | null = document.querySelector('.filters__price');
+        if (filtersPrices) {
+            filtersPrices.remove()
+        }
+    }
     initSortSliders() {
-        this.sorting()
-        this.sortingStock()
+        this.sorting();
+        this.sortingStock();
         this.appendFilterPrice();
         this.appendFilterStock();
         this.initPriceSlider();
-        this.initStockSlider()
+        this.initStockSlider();
     }
     initPriceSlider() {
         const priceLowerSlider = document.querySelector('.price-lower') as HTMLInputElement,
@@ -245,7 +252,14 @@ class SortingPriceStock {
                 sortedProductsLowerSlider = this.cardsPrices.slice(startIndex);
             }
             this.sortCardsPrices = sortedProductsPrice;
-            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsPrice })
+            this.cardsStocks = this.sortCardsPrices
+           
+            this.sortingStock()
+            this.deleteFilterStock()
+            this.appendFilterStock();
+            this.initStockSlider();
+            
+            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsPrice });
         });
         priceUpperSlider.addEventListener('change', () => {
             const endPrice: number = this.listPrice[+priceUpperSlider.value];
@@ -267,7 +281,14 @@ class SortingPriceStock {
                 console.log('end', sortedProductsPrice);
             }
             this.sortCardsPrices = sortedProductsPrice;
-            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsPrice })
+            this.cardsStocks = this.sortCardsPrices
+      
+            this.sortingStock()
+            this.deleteFilterStock()
+            this.appendFilterStock();
+            this.initStockSlider();
+
+            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsPrice });
         });
         priceLowerSlider.addEventListener('input', () => {
             if (priceFrom) {
@@ -299,8 +320,9 @@ class SortingPriceStock {
             }
         });
         stockLowerSlider.addEventListener('change', () => {
+
             const startStock: number = this.listStock[+stockLowerSlider.value];
-            
+
             startStockLowerSlider = startStock;
             if (sortedProductsStock.length > 1 && sortedProductsUpperSlider.length > 1) {
                 const startIndex: number = this.findIndexStockProduct(this.cardsStocks, startStock);
@@ -312,16 +334,20 @@ class SortingPriceStock {
                 sortedProductsLowerSlider = this.cardsStocks.slice(startIndex);
             } else {
                 const startIndex: number = this.findIndexStockProduct(this.cardsStocks, startStock);
-               
+
                 startIndexLowerSlider = startIndex;
                 sortedProductsStock = this.cardsStocks.slice(startIndex);
                 console.log('start', sortedProductsStock);
                 sortedProductsLowerSlider = this.cardsStocks.slice(startIndex);
             }
+            this.sortCardsStock = sortedProductsStock;
 
-            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsStock })
+            
+
+            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsStock });
         });
         stockUpperSlider.addEventListener('change', () => {
+
             const endStock: number = this.listStock[+stockUpperSlider.value];
             endStockUpperSlider = endStock;
             console.log(this.findIndexStockProduct(this.cardsStocks, endStock));
@@ -340,7 +366,11 @@ class SortingPriceStock {
                 sortedProductsUpperSlider = this.cardsStocks.slice(0, endIndex + 1);
                 console.log('end', sortedProductsStock);
             }
-            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsStock })
+            this.sortCardsStock = sortedProductsStock;
+
+           
+
+            this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsStock });
         });
         stockLowerSlider.addEventListener('input', () => {
             if (stockFrom) {
@@ -371,7 +401,7 @@ class SortingPriceStock {
         let left = 0;
         let right: number = arr.length - 1;
         let mid: number;
-       
+
         while (left <= right) {
             mid = Math.floor((right + left) / 2);
 

@@ -34,7 +34,7 @@ class SortingPriceStock {
         this.sortCardsStock = [];
     }
     sorting() {
-        this.listPrice = []
+        this.listPrice = [];
         let minPrice: number = this.cardsPrices[0].price;
         let maxPrice: number = this.cardsPrices[1].price;
         let minStock: number = this.cardsStocks[0].stock;
@@ -75,7 +75,7 @@ class SortingPriceStock {
         console.log(this.cardsPrices, this.listPrice);
     }
     sortingStock() {
-        this.listStock = []
+        this.listStock = [];
         const minStock: number = this.cardsStocks[0].stock;
         const maxStock: number = this.cardsStocks[1].stock;
 
@@ -192,13 +192,13 @@ class SortingPriceStock {
     deleteFilterStock() {
         const filtersStock: HTMLFormElement | null = document.querySelector('.filters__stock');
         if (filtersStock) {
-            filtersStock.remove()
+            filtersStock.remove();
         }
     }
     deleteFiltersPrices() {
         const filtersPrices: HTMLFormElement | null = document.querySelector('.filters__price');
         if (filtersPrices) {
-            filtersPrices.remove()
+            filtersPrices.remove();
         }
     }
     initSortSliders() {
@@ -252,13 +252,13 @@ class SortingPriceStock {
                 sortedProductsLowerSlider = this.cardsPrices.slice(startIndex);
             }
             this.sortCardsPrices = sortedProductsPrice;
-            this.cardsStocks = this.sortCardsPrices
-           
-            this.sortingStock()
-            this.deleteFilterStock()
+            this.cardsStocks = this.sortCardsPrices;
+
+            this.sortingStock();
+            this.deleteFilterStock();
             this.appendFilterStock();
             this.initStockSlider();
-            
+
             this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsPrice });
         });
         priceUpperSlider.addEventListener('change', () => {
@@ -281,10 +281,10 @@ class SortingPriceStock {
                 console.log('end', sortedProductsPrice);
             }
             this.sortCardsPrices = sortedProductsPrice;
-            this.cardsStocks = this.sortCardsPrices
-      
-            this.sortingStock()
-            this.deleteFilterStock()
+            this.cardsStocks = this.sortCardsPrices;
+
+            this.sortingStock();
+            this.deleteFilterStock();
             this.appendFilterStock();
             this.initStockSlider();
 
@@ -320,7 +320,6 @@ class SortingPriceStock {
             }
         });
         stockLowerSlider.addEventListener('change', () => {
-
             const startStock: number = this.listStock[+stockLowerSlider.value];
 
             startStockLowerSlider = startStock;
@@ -342,12 +341,9 @@ class SortingPriceStock {
             }
             this.sortCardsStock = sortedProductsStock;
 
-            
-
             this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsStock });
         });
         stockUpperSlider.addEventListener('change', () => {
-
             const endStock: number = this.listStock[+stockUpperSlider.value];
             endStockUpperSlider = endStock;
             console.log(this.findIndexStockProduct(this.cardsStocks, endStock));
@@ -367,8 +363,6 @@ class SortingPriceStock {
                 console.log('end', sortedProductsStock);
             }
             this.sortCardsStock = sortedProductsStock;
-
-           
 
             this.cardsProduct.setBrandCategoryCards({ cards: sortedProductsStock });
         });

@@ -46,6 +46,12 @@ const baseConfig = {
         new EslingPlugin({ extensions: 'ts' }),
         new MiniCssExtractPlugin({
             filename: '[hash].css'
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: "./src/bd/products.json", to: "bd/" },
+                
+              ],
         })
     ],
 };

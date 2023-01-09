@@ -1,0 +1,29 @@
+
+html, body{
+  box-sizing: border-box;
+  overflow-x: hidden;
+  position: relative;
+}
+*, *::after, *::before{
+  box-sizing: inherit;
+}
+
+*{
+  padding: 0;
+  margin: 0;
+}
+
+ul,li,ol{
+  list-style: none;
+}
+
+img{
+  max-width: 100%;
+}
+
+.container{
+  padding: 0 15px;
+  max-width: 1630px;
+  width: 100%;
+  margin: 0 auto;
+}
